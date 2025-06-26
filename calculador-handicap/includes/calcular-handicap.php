@@ -23,9 +23,6 @@ function calcular_handicap() {
     } else {
         wp_send_json_error(array('message' => 'Datos inválidos'));
     }
-
-    wp_die();
 }
-
 add_action('wp_ajax_calcular_handicap', 'calcular_handicap'); 
 add_action('wp_ajax_nopriv_calcular_handicap', 'calcular_handicap');

@@ -10,7 +10,6 @@ function calcular_wgh() {
 
     if (!$club_id || !$user_id) {
         wp_send_json_error(array('message' => 'Datos inválidos o usuario no autenticado.'));
-        wp_die();
     }
 
     // Obtener los datos del club
@@ -18,7 +17,6 @@ function calcular_wgh() {
 
     if (!$club) {
         wp_send_json_error(array('message' => 'Club no encontrado.'));
-        wp_die();
     }
 
     // Obtener los promedios del usuario
@@ -28,7 +26,6 @@ function calcular_wgh() {
 
     if (!$promedio_wgh || !$promedio_length) {
         wp_send_json_error(array('message' => 'No se encontraron los promedios del usuario.'));
-        wp_die();
     }
 
     // Calcular el WGH de juego
@@ -40,10 +37,7 @@ function calcular_wgh() {
 
     // Enviar respuesta exitosa
     wp_send_json_success(array('wgh' => round($wgh_juego)));
-    wp_die();
 }
-
-// Registrar la acción de AJAX
 add_action('wp_ajax_calcular_wgh', 'calcular_wgh');
 add_action('wp_ajax_nopriv_calcular_wgh', 'calcular_wgh');
 

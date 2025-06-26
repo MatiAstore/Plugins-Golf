@@ -13,9 +13,6 @@ function cargar_scripts_historial_partida() {
         // Encolar el script del historial de par tidas
         wp_enqueue_script('historial-partidas-js', plugin_dir_url(__FILE__) . '../assets/js/historial_partidas.js', array('jquery'), null, true);
 
-        //Encolar icons
-        wp_enqueue_style('font-awesome', 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css');
-
         // Pasar la URL de admin-ajax.php a JavaScript
         wp_localize_script('historial-partidas-js', 'ajaxHistorial', array(
             'ajaxurl' => admin_url('admin-ajax.php'),
@@ -44,7 +41,7 @@ function historial_partidas() {
                             <th>Tee</th>
                             <th>Género</th>
                             <th>Par</th>
-                            <th>Course Rating</th>
+                            <th>Sratch Rating</th>
                             <th>Yardas</th>
                             <th>Golpes Totales</th>
                             <th>Gross</th>

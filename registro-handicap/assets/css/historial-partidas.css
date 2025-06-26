@@ -8,6 +8,10 @@
     gap: 20px; /* Espaciado entre los elementos internos */
 }
 
+.contenedor-tabla .resaltar {
+    font-weight: 800;
+}
+
 .shortcode-historial .btn-cargar-mas {
     background-color: #00c803; /* Color verde */
     color: white;
@@ -126,31 +130,37 @@
     transition: all 0.3s ease;
 }
 
-.contenedor-tabla tr:nth-child(odd) {
-    background-color: #e3e2e2; 
-}
-
 .contenedor-tabla td:hover {
     background-color: #f1f1f1;
     cursor: pointer;
 }
 
-/* Estilos boton eliminar */
+/* Estilos botón eliminar */
 .contenedor-tabla .btn-eliminar-x {
     cursor: pointer;
-    color: #ff4d4d; /* Rojo para indicar eliminar */
     font-size: 25px; /* Tamaño ajustado */
     display: inline-block;
     padding: 5px;
     transition: transform 0.2s, color 0.2s ease;
 }
 
+/* Efecto hover en el botón */
 .contenedor-tabla .btn-eliminar-x:hover {
     transform: scale(1.2); /* Efecto de zoom */
-    color: darkred; /* Cambiar a un rojo más oscuro */
 }
 
-.contenedor-tabla .btn-eliminar-x::after{
+/* Estilo del SVG dentro del botón */
+.contenedor-tabla .btn-eliminar-x svg {
+    fill: #ff4d4d; /* Rojo por defecto */
+}
+
+/* Efecto hover en el SVG */
+.contenedor-tabla .btn-eliminar-x:hover svg {
+    fill: darkred; /* Cambia a un rojo más oscuro al hacer hover */
+}
+
+/* Tooltip de eliminar */
+.contenedor-tabla .btn-eliminar-x::after {
     content: "Eliminar partida"; 
     position: absolute;
     bottom: 100%; 
@@ -166,15 +176,17 @@
     transition: opacity 0.3s ease;
 }
 
+/* Mostrar tooltip al hacer hover */
 .contenedor-tabla .btn-eliminar-x:hover::after {
-    opacity: 1; 
+    opacity: 1;
 }
 
+/* Estilos del botón en la celda de la tabla */
 .contenedor-tabla td .btn-eliminar-x {
     background-color: transparent; 
-    border: none;                 
-    cursor: pointer;              
-    padding: 0;                  
+    border: none;
+    cursor: pointer;
+    padding: 0;
 }
 
 /* Estilos para el mensaje de éxito */
@@ -357,12 +369,7 @@
 }
 
 
-
-
-
-
 /* RESPONSIVIDAD */
-/* Pantallas pequeñas (móviles) */
 @media (max-width: 768px) {
     .contenedor-tabla {
         display: none; /* Ocultar la tabla */

@@ -6,46 +6,51 @@ function calculador_buscar_clubes() {
     // Obtener y sanitizar la entrada
     $nombre_club = isset($_POST['nombre_club']) ? sanitize_text_field($_POST['nombre_club']) : '';
 
+    //Paginacion
     $pagina = isset($_POST['pagina']) ? intval($_POST['pagina']) : 1;
     $limite = 5;
     $offset = ($pagina - 1) * $limite;
-
     $append = isset($_POST['append']) && $_POST['append'] === 'true';
+
+    // Escapar para LIKE
+    $nombre_club_like = '%' . $wpdb->esc_like($nombre_club) . '%';
 
     // Consulta para obtener clubes únicos por nombre (usando GROUP BY)
     $clubes = $wpdb->get_results(
         $wpdb->prepare(
-            "SELECT MIN(id) as id, club_name, ciudad
+            "SELECT DISTINCT club_name, ciudad
              FROM wp_clubs
              WHERE club_name LIKE %s
-             GROUP BY club_name, ciudad
              ORDER BY CASE
                         WHEN club_name = %s THEN 1
                         WHEN club_name LIKE %s THEN 2
                         ELSE 3
                      END
              LIMIT %d OFFSET %d",
-            '%' . esc_sql($nombre_club) . '%',
+            $nombre_club_like,
             $nombre_club,
-            '%' . esc_sql($nombre_club) . '%',
+            $nombre_club_like,
             $limite,
             $offset
         )
     );
 
-    // Total de clubes encontrados
-    $total_clubes = $wpdb->get_var(
+    // Obtener el total de clubes únicos
+    $total_clubes = (int) $wpdb->get_var(
         $wpdb->prepare(
-            "SELECT COUNT(DISTINCT club_name) 
-             FROM wp_clubs 
-             WHERE club_name LIKE %s",
-            '%' . esc_sql($nombre_club) . '%'
+            "SELECT COUNT(DISTINCT club_name) FROM wp_clubs WHERE club_name LIKE %s",
+            $nombre_club_like
         )
     );
 
     if (!empty($clubes)) {
+    // Construcción de respuesta
         $response = [
-            'clubes' => [],
+            'clubes' => array_map(fn($club) => [
+                'club_id' => $club->id,
+                'club_name' => $club->club_name,
+                'ciudad' => $club->ciudad,
+            ], $clubes),
             'more_results' => $total_clubes > $pagina * $limite,
         ];
 
@@ -53,21 +58,11 @@ function calculador_buscar_clubes() {
             $response['total_resultados'] = $total_clubes;
         }
 
-        foreach ($clubes as $club) {
-            $response['clubes'][] = [
-                'club_id' => $club->id, 
-                'club_name' => $club->club_name,
-                'ciudad' => $club->ciudad,
-            ];
-        }
-
-        // Respuesta exitosa
         wp_send_json_success($response);
     } else {
         wp_send_json_error(['message' => 'No se encontraron clubes con ese nombre.']);
     }
 
-    wp_die();
 }
 add_action('wp_ajax_calculador_buscar_clubes', 'calculador_buscar_clubes');
 add_action('wp_ajax_nopriv_calculador_buscar_clubes', 'calculador_buscar_clubes');
@@ -76,66 +71,42 @@ function calculador_buscar_tees() {
     global $wpdb;
 
     // Obtener el nombre del club desde la solicitud
-    $club_name = isset($_POST['club_name']) ? $_POST['club_name'] : '';  // Evitar la sanitización aquí
+    $club_name = $_POST['club_name'] ?? '';
     $use_course_rating = isset($_POST['course_rating']) && $_POST['course_rating'] === 'true';
-
 
     // Validar que no esté vacío
     if (empty($club_name)) {
         wp_send_json_error(['message' => 'El nombre del club no es válido.']);
-        wp_die();
     }
-
-    // Escapar el nombre del club para la consulta
-    $club_name = esc_sql($club_name);
 
     // Seleccionar el campo apropiado según course_rating
     $rating_field = $use_course_rating ? 'course_rating' : 'slope_rating';
 
-
     // Consulta para obtener los nombres únicos de tees para el club especificado
     $tees = $wpdb->get_results(
         $wpdb->prepare(
-            "SELECT DISTINCT id, tee_name, gender, $rating_field AS rating 
+            "SELECT DISTINCT id, tee_name, gender, par, $rating_field as rating
              FROM wp_clubs 
              WHERE club_name = %s",
             $club_name
         )
     );
 
-    // Validar si no hay tees
+    // Si no hay tees, devolver error de inmediato
     if (empty($tees)) {
         wp_send_json_error(['message' => 'No se encontraron tees para este club.']);
-        wp_die();
     }
 
-    // Construir la respuesta con validación adicional
-    $response = [
-        'tees' => []
-    ];
+    // Construcción de respuesta 
+    $response = array_map(fn($tee) => [
+        'club_id' => $tee->id, 
+        'tee_name' => $tee->tee_name,
+        'gender' => $tee->gender,
+        'par' => $tee->par, 
+        'rating' => $tee->rating,
+    ], array_filter($tees, fn($tee) => !empty($tee->tee_name)));
 
-    foreach ($tees as $tee) {
-        // Validar que tee_name no sea vacío ni inválido
-        if (!empty($tee->tee_name) && trim($tee->tee_name) !== "") {
-            $response['tees'][] = [
-                'club_id' => $tee->id, // Agregar el ID del club
-                'tee_name' => $tee->tee_name,
-                'gender' => $tee->gender,
-                'rating' => $tee->rating,
-            ];
-        }
-    }
-
-    // Si no se encontraron tees válidos
-    if (empty($response['tees'])) {
-        wp_send_json_error(['message' => 'No se encontraron tees válidos para este club.']);
-        wp_die();
-    }
-
-    // Respuesta exitosa
-    wp_send_json_success($response);
-
-    wp_die();
+    wp_send_json_success(['tees' => $response]);
 }
 add_action('wp_ajax_calculador_buscar_tees', 'calculador_buscar_tees');
 add_action('wp_ajax_nopriv_calculador_buscar_tees', 'calculador_buscar_tees');

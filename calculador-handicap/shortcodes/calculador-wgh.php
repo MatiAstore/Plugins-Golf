@@ -9,7 +9,7 @@ function cargar_scripts_wgh() {
     if (is_singular() && has_shortcode(get_post()->post_content, 'formulario_wgh')) {
         
         wp_enqueue_script('wgh-js', plugin_dir_url(__FILE__) . '../assets/js/wgh.js', array('jquery'), null, true);
-        wp_enqueue_style('handicap-css', plugin_dir_url(__FILE__) . '../assets/css/handicap.css', array(), null, 'all');
+        wp_enqueue_style('handip-css', plugin_dir_url(__FILE__) . '../assets/css/handip.css', array(), null, 'all');
 
         wp_localize_script('wgh-js', 'ajaxWGH', array(
             'ajaxurl' => admin_url('admin-ajax.php')
@@ -23,6 +23,10 @@ function mi_plugin_formulario_wgh() {
     ob_start();
     ?>        
     <div class="shortcode-wgh" id="shortcode-wgh">
+        
+        <!-- Sección: Clubes Habituales -->
+        <div id="clubes-habituales" style="display: none;"></div>
+
         <input type="text" id="nombre_club" placeholder="Buscar club">
 
         <div id="resultados_clubes"></div>

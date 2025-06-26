@@ -1,22 +1,22 @@
 <?php
 defined('ABSPATH') || exit; 
 
-require_once plugin_dir_path(__FILE__) . '../includes/obtener-wgh.php';
+require_once plugin_dir_path(__FILE__) . '../includes/get-user-data.php';
 
 function cargar_scripts_view(){
-    if(is_singular() && has_shortcode(get_post()->post_content, 'view_wgh')){
-        wp_enqueue_style('view-wgh-css', plugin_dir_url(__FILE__) . '../assets/css/view-wgh.css', array(), null, 'all');
-        wp_enqueue_script('view-wgh-js', plugin_dir_url(__FILE__) . '../assets/js/view_wgh.js', array('jquery'), null, true);
+    if(is_singular() && has_shortcode(get_post()->post_content, 'view_user_data')){
+        wp_enqueue_style('view-user-data-css', plugin_dir_url(__FILE__) . '../assets/css/view-user-data.css', array(), null, 'all');
+        wp_enqueue_script('view-user-data-js', plugin_dir_url(__FILE__) . '../assets/js/view-user-data.js', array('jquery'), null, true);
 
         
-        wp_localize_script('view-wgh-js', 'ajaxView', array(
+        wp_localize_script('view-user-data-js', 'ajaxView', array(
             'ajaxurl' => admin_url('admin-ajax.php'),
         )); 
     }
 }
 add_action('wp_enqueue_scripts', 'cargar_scripts_view'); 
 
-function view_wgh(){
+function view_user_data(){
     ob_start(); ?>
 
     <div class="shortcode-view">
@@ -29,4 +29,4 @@ function view_wgh(){
     <?php 
     return ob_get_clean();
 }
-add_shortcode('view_wgh', 'view_wgh'); 
+add_shortcode('view_user_data', 'view_user_data'); 
