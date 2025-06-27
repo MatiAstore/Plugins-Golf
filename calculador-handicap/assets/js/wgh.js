@@ -166,7 +166,7 @@
                     }
                     let opcionesTees = response.data.tees.map(tee => `
                         <option value="${tee.club_id}" data-tee-name="${tee.tee_name}" data-gender="${tee.gender}" data-par="${tee.par}" data-rating="${tee.rating}">
-                            ${tee.tee_name} (${tee.gender}) - Rating: ${tee.rating} - Par: ${tee.par}
+                            ${tee.tee_name} (${tee.gender}) - Par: ${tee.par}
                         </option>
                     `).join('');
                     teeSelect.append(opcionesTees).prop('disabled', false);
@@ -185,7 +185,6 @@
                 <strong>Tee:</strong> ${selected.data('tee-name')}<br>
                 <strong>Par:</strong> ${selected.data('par')}<br>
                 <strong>Género:</strong> ${selected.data('gender')}<br>
-                <strong>Rating:</strong> ${selected.data('rating')}
             `);
             $('#contenedor-seleccion-y-formulario').show();
             $('#club_id').val(selected.val());
@@ -245,7 +244,6 @@
                     <div class="clubes-habituales-info">
                         <span>Tee: ${club.tee_name}</span> 
                         <span> - Gender: ${club.gender}</span> 
-                        <span> - Rating: ${club.rating}</span> 
                     </div>
 
                     
@@ -288,7 +286,6 @@
                 <strong>Tee:</strong> ${tee_name}<br>
                 <strong>Par:</strong> ${par}<br>
                 <strong>Género:</strong> ${gender}<br>
-                <strong>Rating:</strong> ${rating}
             `);
 
             $('#club_id').val(club_id);

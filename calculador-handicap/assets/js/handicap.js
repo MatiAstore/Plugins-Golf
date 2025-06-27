@@ -127,7 +127,7 @@
             buscarClubesHandicap($(this).data('nombre'), $(this).data('pagina'), true);
         });
 
-        // Seleccionar un club
+        // Manejar la seleccion de un club
         $(document).on('click', '.seleccionar-club', function () {
             let club_name = $(this).data('name'), ciudad = $(this).data('ciudad');
 
@@ -149,22 +149,23 @@
             mostrarTeesHandicap(club_name);
         });
 
-        // Función para mostrar tees
+        // Función para mostrar. 
         function mostrarTeesHandicap(club_name, course_rating) {
             let teeSelect = $('#tee_select').empty().append('<option value="" disabled selected>Selecciona un tee</option>').prop('disabled', true);
 
+            //peticion al backend para que traiga los tees relacionados a un club 
             $.ajax({
                 url: ajaxHandicap.ajaxurl,
                 type: 'POST',
                 dataType: 'json',
-                data: { action: 'calculador_buscar_tees', club_name: club_name, course_Rating : course_rating ? 'true' : 'false' },
+                data: { action: 'calculador_buscar_tees', club_name: club_name, course_Rating : course_rating ? 'true' : 'false' }, //envia nombre, y true o false si tiene rating. 
                 success: function (response) {
                     if (!response.success || !response.data || response.data.tees.length === 0) {
                         return alert('No se encontraron tees.');
                     }
                     let opcionesTees = response.data.tees.map(tee => `
                         <option value="${tee.club_id}" data-tee-name="${tee.tee_name}" data-gender="${tee.gender}" data-par="${tee.par}" data-rating="${tee.rating}">
-                            ${tee.tee_name} (${tee.gender}) - Rating: ${tee.rating} - Par: ${tee.par}
+                            ${tee.tee_name} (${tee.gender}) - Par: ${tee.par}
                         </option>
                     `).join('');
                     teeSelect.append(opcionesTees).prop('disabled', false);
@@ -183,7 +184,6 @@
                 <strong>Tee:</strong> ${selected.data('tee-name')}<br>
                 <strong>Par:</strong> ${selected.data('par')}<br>
                 <strong>Género:</strong> ${selected.data('gender')}<br>
-                <strong>Rating:</strong> ${selected.data('rating')}
             `);
             $('#contenedor-seleccion-y-formulario').show();
             $('#club_id').val(selected.val());
@@ -192,6 +192,8 @@
             document.querySelector('#contenedor-seleccion-y-formulario').scrollIntoView({ behavior: 'smooth', block: 'center' });
         }); 
 
+
+        // FUNCIONES PARA CLUBES HABITUALES 
         // Cargar clubes desde localStorage
         function cargarClubesHabituales() {
             let cached = localStorage.getItem(STORAGE_KEY);
@@ -215,7 +217,7 @@
         
                 if (clubes.length < 3) {
                     // Si hay espacio, simplemente lo agregamos
-                    clubes.push(club);
+                    clubes.push(club); 
                 } else {
                     // Encontrar el club con menor uso para reemplazarlo
                     let menosUsadoIndex = clubes.reduce((minIndex, c, i) => c.uso < clubes[minIndex].uso ? i : minIndex, 0);
@@ -242,7 +244,6 @@
                     <div class="clubes-habituales-info">
                         <span>Tee: ${club.tee_name}</span> 
                         <span> - Gender: ${club.gender}</span> 
-                        <span> - Rating: ${club.rating}</span> 
                     </div>
 
                     
@@ -259,15 +260,13 @@
                 </li>
             `).join('');
 
+            //Insertar clubes habituales
             $('#clubes-habituales').show().html(`
                 <h3>Tus Búsquedas Habituales</h3>
                 <ul>${clubesHTML}</ul>
             `);
         }
 
-
-
-        
         // Manejar selección de un club habitual
         $(document).on('click', '.seleccionar-club-habitual', function () {
         let club_name = $(this).data('name'),
@@ -288,7 +287,6 @@
             <strong>Tee:</strong> ${tee_name}<br>
             <strong>Par:</strong> ${par}<br>
             <strong>Género:</strong> ${gender}<br>
-            <strong>Rating:</strong> ${rating}
         `);
 
         $('#club_id').val(club_id);
@@ -296,7 +294,8 @@
         document.querySelector('#contenedor-seleccion-y-formulario').scrollIntoView({ behavior: 'smooth', block: 'center' });
         }); 
 
-       // Calcular handicap
+
+        //CALCULAR HANDICAP 
         $('#form-calcular-handicap').on('submit', function (e) {
             e.preventDefault();
             const club_id = $('#club_id').val();
