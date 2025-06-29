@@ -80,7 +80,7 @@ function registro_buscar_tees() {
     // Consulta para obtener los nombres únicos de tees para el club especificado
     $tees = $wpdb->get_results(
         $wpdb->prepare(
-            "SELECT DISTINCT id, tee_name, gender, par, course_rating 
+            "SELECT DISTINCT id, tee_name, gender, par, `length`, course_rating 
              FROM wp_clubs 
              WHERE club_name = %s",
             $club_name
@@ -99,6 +99,7 @@ function registro_buscar_tees() {
         'gender' => $tee->gender,
         'par' => $tee->par, 
         'rating' => $tee->course_rating,
+        'length' => $tee->length,
     ], array_filter($tees, fn($tee) => !empty($tee->tee_name)));
 
     wp_send_json_success(['tees' => $response]);
@@ -137,7 +138,8 @@ function registro_clubes_habituales() {
                 'tee_name' => $club->tee_name,
                 'gender' => $club->gender,
                 'par' => $club->par,
-                'rating' => $club->course_rating
+                'rating' => $club->course_rating,
+                'length' => $club->length
             ], $clubes_habituales)
         ]);
     } else {

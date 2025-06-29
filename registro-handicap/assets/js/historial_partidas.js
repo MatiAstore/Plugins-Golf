@@ -15,6 +15,7 @@ jQuery(document).ready(function ($) {
         const mejoresPartidas = partidas.slice(0, 20)
             .sort((a, b) => a.desempeño_objetivo - b.desempeño_objetivo)
             .slice(0, 10);
+
         mejoresPartidasIds = new Set(mejoresPartidas.map(p => p.id));
     }
 
@@ -38,7 +39,6 @@ jQuery(document).ready(function ($) {
                 <button class="btn-ver-detalles">Ver más detalles</button>
                 <button class="btn-eliminar" data-partida-id="${partida.id}">Eliminar</button>
                 <div class="detalles-adicionales" style="display: none;">
-                    <p><strong>Course Rating:</strong> ${partida.course_rating}</p>
                     <p><strong>Tee:</strong> ${partida.tee_name}</p>
                     <p><strong>Género:</strong> ${partida.gender}</p>
                     <p><strong>Yardas:</strong> ${partida.length}</p>
@@ -54,7 +54,6 @@ jQuery(document).ready(function ($) {
                 <td>${partida.tee_name}</td>
                 <td>${partida.gender}</td>
                 <td>${partida.par}</td>
-                <td>${partida.course_rating}</td>
                 <td>${partida.length}</td>
                 <td>${partida.golpes_totales}</td>
                 <td>${partida.total_neto > 0 ? `+${partida.total_neto}` : partida.total_neto}</td>
@@ -83,7 +82,7 @@ jQuery(document).ready(function ($) {
         // Limpiar la UI si es la primera página.
         if (pagina === 1) {tablaPartidas.empty(); tarjetasPartidas.empty();}
         if (!partidasPagina.length) {
-            tablaPartidas.append('<tr><td colspan="10">No hay partidas disponibles</td></tr>');
+            tablaPartidas.append('<tr><td colspan="9">No hay partidas disponibles</td></tr>');
             tarjetasPartidas.append('<p class="mensaje-no-encontrado">No hay partidas disponibles.</p>');
             return botonCargarMas.hide();
         }
@@ -114,15 +113,22 @@ jQuery(document).ready(function ($) {
             beforeSend: () => botonCargarMas.prop('disabled', true).text('Cargando...'),
             success: (response) => {
                 if (!response.success) return alert('Error al cargar las partidas.');
+                // Se colocan las partidas en el arreglo partidas global.   
                 partidas = response.data.partidas;
+                // Se calculan las mejores partidas.  
                 calcularMejoresPartidas();
+                // Se actualizan los promedios de desempeño y length.  
                 promedioDesempeñoSpan.text(parseFloat(response.data.promedio_desempeño).toFixed(2));
                 promedioYardasSpan.text(parseFloat(response.data.promedio_length).toFixed(2));
+                // Se renderizan las partidas.  
                 renderizarPartidas(paginaActual);
             },
             error: () => { alert('Error al cargar datos, reintentando...'); cargarPartidas(); }
         });
     }
+
+    // Inicializar la carga
+    cargarPartidas();
 
     // Función para eliminar una partida.
     function eliminarPartida(partidaId) {
@@ -159,9 +165,6 @@ jQuery(document).ready(function ($) {
             }
         });
     }
-
-    // Inicializar la carga
-    cargarPartidas();
     
     // Unificar eventos de eliminación de partidas
     $(document).on('click', '.btn-eliminar-x, .btn-eliminar', function () {

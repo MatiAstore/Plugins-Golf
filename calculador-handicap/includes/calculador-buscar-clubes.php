@@ -85,10 +85,10 @@ function calculador_buscar_tees() {
     // Consulta para obtener los nombres únicos de tees para el club especificado
     $tees = $wpdb->get_results(
         $wpdb->prepare(
-            "SELECT DISTINCT id, tee_name, gender, par, $rating_field as rating
+            "SELECT DISTINCT id, tee_name, gender, par, `length`, $rating_field as rating
              FROM wp_clubs 
              WHERE club_name = %s",
-            $club_name
+            $club_name 
         )
     );
 
@@ -104,6 +104,7 @@ function calculador_buscar_tees() {
         'gender' => $tee->gender,
         'par' => $tee->par, 
         'rating' => $tee->rating,
+        'length' => $tee->length,
     ], array_filter($tees, fn($tee) => !empty($tee->tee_name)));
 
     wp_send_json_success(['tees' => $response]);

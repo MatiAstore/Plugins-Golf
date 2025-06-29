@@ -7,7 +7,7 @@ function obtener_partidas() {
         wp_send_json_error(['message' => 'Debes estar logueado para ver tus partidas.']);
     }
 
-    global $wpdb;
+    global $wpdb; 
     $user_id = get_current_user_id();
 
     // Claves de caché
@@ -18,6 +18,7 @@ function obtener_partidas() {
     $partidas = get_transient($transient_key_partidas);     
     $promedios = get_transient($transient_key_promedios);     
 
+    // Si no hay partidas, se obtienen las partidas de la base de datos.  
     if ($partidas === false) {
         $partidas = $wpdb->get_results(
             $wpdb->prepare(
@@ -31,9 +32,11 @@ function obtener_partidas() {
             ARRAY_A
         );
 
+        // Guardar las partidas en caché.  
         set_transient($transient_key_partidas, $partidas, HOUR_IN_SECONDS); 
     }
 
+    // Si no hay partidas, se envía todo vacio, incluido el promedio de desempeño y el promedio de length.  
     if (empty($partidas)) {
         wp_send_json_success([
             'partidas' => [],
@@ -43,6 +46,7 @@ function obtener_partidas() {
         ]);
     }
 
+    // Si no hay promedios, se obtienen los promedios de la base de datos.  
     if ($promedios === false) {
         $tabla_promedios = $wpdb->prefix . 'users_promedio'; 
         $promedios = [
@@ -50,6 +54,7 @@ function obtener_partidas() {
             "promedio_length" => $wpdb->get_var($wpdb->prepare("SELECT promedio_length FROM $tabla_promedios WHERE user_id = %d", $user_id)) ?: 0
         ];
 
+        // Guardar los promedios en caché.   
         set_transient($transient_key_promedios, $promedios, 2 * HOUR_IN_SECONDS); 
     }
 

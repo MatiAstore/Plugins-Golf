@@ -41,7 +41,7 @@ function historial_partidas() {
                             <th>Tee</th>
                             <th>Género</th>
                             <th>Par</th>
-                            <th>Sratch Rating</th>
+                            <!-- <th>Sratch Rating</th> --> 
                             <th>Yardas</th>
                             <th>Golpes Totales</th>
                             <th>Gross</th>
@@ -49,7 +49,7 @@ function historial_partidas() {
                         </tr>
                     </thead>
                     <tbody id="tabla-partidas">
-                        <tr><td colspan="10">Cargando partidas...</td></tr>
+                        <tr><td colspan="9"Cargando partidas...</td></tr>
                     </tbody>
                 </table>
                 
