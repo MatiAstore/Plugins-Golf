@@ -20,9 +20,19 @@ jQuery(document).ready(function ($) {
     }
 
     // Función que genera el HTML para una partida. 
-    function generarHTMLPartida(partida, esMejor, esMenosDe10) {
+    function generarHTMLPartida(partida, esMejor, esMenosDe10, esPartidaMasReciente) {
         const claseResaltar = esMejor || esMenosDe10 ? 'resaltar' : '';
         
+        const buttonEliminarTarjeta = esPartidaMasReciente ? 
+        `<button class="btn-eliminar" data-partida-id="${partida.id}">Eliminar</button>` : '';
+
+        const buttonEliminarTabla = esPartidaMasReciente ? 
+        `<span class="btn-eliminar-x" data-partida-id="${partida.id}">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" width="16" height="16">
+                <path d="M135.2 17.7L128 32 32 32C14.3 32 0 46.3 0 64S14.3 96 32 96l384 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-96 0-7.2-14.3C307.4 6.8 296.3 0 284.2 0L163.8 0c-12.1 0-23.2 6.8-28.6 17.7zM416 128L32 128 53.2 467c1.6 25.3 22.6 45 47.9 45l245.8 0c25.3 0 46.3-19.7 47.9-45L416 128z"/>
+            </svg>
+        </span>` : '';
+
         const htmlTarjeta = `
             <div class="tarjeta-partida ${claseResaltar}">
                 <div class="first-row">
@@ -37,7 +47,7 @@ jQuery(document).ready(function ($) {
                     <p id="desempeño_objetivo">${partida.desempeño_objetivo}</p>
                 </div>
                 <button class="btn-ver-detalles">Ver más detalles</button>
-                <button class="btn-eliminar" data-partida-id="${partida.id}">Eliminar</button>
+                ${buttonEliminarTarjeta}
                 <div class="detalles-adicionales" style="display: none;">
                     <p><strong>Tee:</strong> ${partida.tee_name}</p>
                     <p><strong>Género:</strong> ${partida.gender}</p>
@@ -59,11 +69,7 @@ jQuery(document).ready(function ($) {
                 <td>${partida.total_neto > 0 ? `+${partida.total_neto}` : partida.total_neto}</td>
                 <td>${partida.desempeño_objetivo}</td>
                 <td>
-                    <span class="btn-eliminar-x" data-partida-id="${partida.id}">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" width="16" height="16">
-                            <path d="M135.2 17.7L128 32 32 32C14.3 32 0 46.3 0 64S14.3 96 32 96l384 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-96 0-7.2-14.3C307.4 6.8 296.3 0 284.2 0L163.8 0c-12.1 0-23.2 6.8-28.6 17.7zM416 128L32 128 53.2 467c1.6 25.3 22.6 45 47.9 45l245.8 0c25.3 0 46.3-19.7 47.9-45L416 128z"/>
-                        </svg>
-                    </span>
+                    ${buttonEliminarTabla}
                 </td>
             </tr>
         `;
@@ -89,9 +95,10 @@ jQuery(document).ready(function ($) {
     
         const esMenosDe10 = partidas.length <= 10;
     
-        partidasPagina.forEach(partida => {
+        partidasPagina.forEach((partida, index) => {
             const esMejor = mejoresPartidasIds.has(partida.id);
-            const { htmlTarjeta, htmlTabla: tabla } = generarHTMLPartida(partida, esMejor, esMenosDe10);
+            const esPartidaMasReciente = pagina === 1 && index === 0; 
+            const { htmlTarjeta, htmlTabla: tabla } = generarHTMLPartida(partida, esMejor, esMenosDe10, esPartidaMasReciente);
             htmlTarjetas += htmlTarjeta;
             htmlTabla += tabla;
         });
@@ -112,7 +119,9 @@ jQuery(document).ready(function ($) {
             dataType: 'json',
             beforeSend: () => botonCargarMas.prop('disabled', true).text('Cargando...'),
             success: (response) => {
-                if (!response.success) return alert('Error al cargar las partidas.');
+                if (!response.success) {
+                    return alert('Error al cargar las partidas.');
+                }
                 // Se colocan las partidas en el arreglo partidas global.   
                 partidas = response.data.partidas;
                 // Se calculan las mejores partidas.  
