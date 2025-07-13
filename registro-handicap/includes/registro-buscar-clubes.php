@@ -118,7 +118,7 @@ function registro_clubes_habituales() {
     // Consulta para obtener los clubes más jugados por el usuario
     $clubes_habituales = $wpdb->get_results(
         $wpdb->prepare(
-            "SELECT c.id, c.club_name, c.ciudad, c.tee_name, c.gender, c.par, c.course_rating
+            "SELECT c.id, c.club_name, c.ciudad, c.tee_name, c.gender, c.par, c.course_rating, c.length
              FROM wp_historial_partidas h
              INNER JOIN wp_clubs c ON h.club_id = c.id
              WHERE h.user_id = %d

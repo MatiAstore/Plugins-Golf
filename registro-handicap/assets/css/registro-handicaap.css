@@ -168,23 +168,70 @@
 }
 
 /* TEE SELECCIONADO */
-.shortcode-registro #tee-seleccionado label {
-    display: block;
+.shortcode-registro #form-seleccion-tee {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 10px;
 }
 
-.shortcode-registro #tee-seleccionado select#tee_select {
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    font-size: var(--font-base);
+.shortcode-registro #form-seleccion-tee .tee-option {
+    display: flex;
+    align-items: center;
+}
+
+.shortcode-registro #form-seleccion-tee .tee-option input[type="radio"] {
+    display: none; /* Ocultar el radio button nativo */
+}
+
+.shortcode-registro #form-seleccion-tee .tee-label {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 6px 10px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background-color: #ffffff;
+    width: 100%; /* ocupar del contenedor padre 100% */ 
     box-sizing: border-box;
-    width: 100%;
-    background-color: #fff;
 }
 
-.shortcode-registro #tee-seleccionado select#tee_select:focus {
-    border: 2px solid var(--primary-color);
-    outline: none;
+.shortcode-registro #form-seleccion-tee .tee-label:hover {
+    border-color: var(--primary-color);
+    background-color: #f0f8f0;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.shortcode-registro #form-seleccion-tee .tee-option input[type="radio"]:checked + .tee-label{
+    border-color: var(--primary-color);
+    background-color: #e8f5e8;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.shortcode-registro #form-seleccion-tee .tee-circle {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: 2px solid #333;
+    flex-shrink: 0;
+}
+
+.shortcode-registro #form-seleccion-tee .tee-info {
+    flex: 1;
+    line-height: 1.4;
+}
+
+.shortcode-registro #form-seleccion-tee .tee-info strong {
+    color: #333;
+    font-size: var(--font-lg);
+}
+
+.shortcode-registro #form-seleccion-tee .tee-info small {
+    color: #666;
+    font-size: var(--font-base);
 }
 
 /* FORMULARIO DE REGISTRO */
@@ -413,10 +460,20 @@
         padding: 12px;
         font-size: var(--font-base);
     }
-    .shortcode-registro #tee-seleccionado select#tee_select {
-        padding: 12px;
-        font-size: var(--font-base)
+
+    /* Medias queries para tee  */
+    .shortcode-registro #form-seleccion-tee .tee-label {
+        padding: 10px 14px;
     }
+    
+    .shortcode-registro #form-seleccion-tee .tee-info strong {
+        font-size: var(--font-xl);
+    }
+
+    .shortcode-registro #form-seleccion-tee .tee-info small {
+        font-size: var(--font-lg);
+    }
+
     .shortcode-registro #resultados_clubes li {
         flex-direction: column;
         align-items: flex-start;

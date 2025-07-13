@@ -39,7 +39,6 @@ function formulario_partida() {
     ob_start();
     ?>
     <div class="shortcode-registro" id="shortcode-registro">
-
         <!-- Sección: Clubes Habituales -->
         <div id="clubes-habituales" style="display: none;"></div>
 
@@ -58,13 +57,15 @@ function formulario_partida() {
 
         <!-- Sección: Elegir Tee del club -->
         <div id="tee-seleccionado" style="display: none;">
-            <label for="tee_select">Seleccionar Tee:</label>
-            <select id="tee_select" name="tee_select" required></select>
+            <p>Selecciona tu Tee:</p>    
+            <form id="form-seleccion-tee">
+                
+            </form>
         </div>
 
+
         <!-- Sección: Formulario de datos y club elegido -->
-        <div id="contenedor-seleccion-y-formulario" style="display: none;">
-        
+        <div id="contenedor-seleccion-y-formulario" style="display: none;">    
             <div id="club-seleccionado" class="margin-top: 10px;"></div>
 
             <form id="form_partida" method="POST">

@@ -410,7 +410,6 @@
                             length: $('input[name="tee_select"]:checked').data('length')
                         };
 
-
                         guardarClubHabitual(club); // Guardar solo después del cálculo
 
                         // Desplazar la vista hasta el resultado del handicap

@@ -84,7 +84,7 @@
         }
 
         // Maneja el envío del formulario
-        $(document).on('submit', '#form_partida', function (e) {
+        $(document).on('change', '#form_partida', function (e) {
             e.preventDefault();
             $('#resultado').empty();
             
