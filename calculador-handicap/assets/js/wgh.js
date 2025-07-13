@@ -153,8 +153,8 @@
 
         // Función para mostrar tees
         function mostrarTeesWGH(club_name, course_rating) {
-            let teeSelect = $('#tee_select').empty().append('<option value="" disabled selected>Selecciona un tee</option>').prop('disabled', true);
-
+            let teeForm = $("#form-seleccion-tee").empty();
+            
             $.ajax({
                 url: ajaxWGH.ajaxurl,
                 type: 'POST',
@@ -164,22 +164,90 @@
                     if (!response.success || !response.data || response.data.tees.length === 0) {
                         return alert('No se encontraron tees.');
                     }
-                    let opcionesTees = response.data.tees.map(tee => `
-                        <option value="${tee.club_id}" data-tee-name="${tee.tee_name}" data-gender="${tee.gender}" data-par="${tee.par}" data-rating="${tee.rating}" data-length="${tee.length}">
-                            ${tee.tee_name} (${tee.gender}) - Yardas: ${tee.length} - Par: ${tee.par}
-                        </option>
-                    `).join('');
-                    teeSelect.append(opcionesTees).prop('disabled', false);
+                    
+                    let radioButtonsHTML = response.data.tees.map(tee => {
+                        // Determinar el color del círculo basado en el nombre del tee
+                        let teeColor = getTeeColor(tee.tee_name);
+                        
+                        return `
+                            <div class="tee-option">
+                                <input type="radio" 
+                                       id="tee_${tee.club_id}" 
+                                       name="tee_select" 
+                                       value="${tee.club_id}" 
+                                       data-tee-name="${tee.tee_name}" 
+                                       data-gender="${tee.gender}" 
+                                       data-par="${tee.par}" 
+                                       data-rating="${tee.rating}" 
+                                       data-length="${tee.length}">
+                                <label for="tee_${tee.club_id}" class="tee-label">
+                                    <span class="tee-circle" style="background: ${teeColor}"></span>
+                                    <span class="tee-info">
+                                        <strong>${tee.tee_name}</strong> (${tee.gender})
+                                        <br>
+                                        <small>Yardas: ${tee.length} - Par: ${tee.par}</small>
+                                    </span>
+                                </label>
+                            </div>
+                        `;
+                    }).join('');
+                    
+                    teeForm.html(radioButtonsHTML);
                 },
                 error: function (xhr, status, error) {
                     console.error("Error en la solicitud de tees: ", status, error);
                 }
             });
         }
+
+      
+        function getTeeColor(teeName) {
+            const colors = {
+                red: '#ff4444',
+                yellow: '#ffdd00',
+                blue: '#4444ff',
+                white: '#ffffff',
+                black: '#000000',
+                gold: '#ffaa00',
+                silver: '#cccccc',
+                green: '#00ff00',
+                orange: '#ffa500',
+                pink: '#ffc0cb',
+                brown: '#a52a2a',
+                gray: '#808080',
+                navy: '#000080',
+                maroon: '#800000',
+                teal: '#008080'
+            };
+        
+            let teeNameLower = teeName.toLowerCase();
+        
+            // Si contiene una barra, se asume combinación (como "red/blue", "white/black")
+            if (teeNameLower.includes('/')) {
+                const parts = teeNameLower.split('/');
+                const color1 = getSingleColor(parts[0], colors);
+                const color2 = getSingleColor(parts[1], colors);
+                return `linear-gradient(90deg, ${color1}, ${color2})`;
+            }
+        
+            //si no hay dos colores, retorna directo el rgb del color 
+            return getSingleColor(teeNameLower, colors);
+        }
+        
+        // Helper para obtener un color por palabra clave
+        function getSingleColor(namePart, colorMap) {
+            for (let colorName in colorMap) {
+                // si el color tomado del split coincide con algun color del mapa (key), se retorna el rgb asociado
+                if (namePart.includes(colorName)) {
+                    return colorMap[colorName];
+                }
+            }
+            return '#666666'; // color por defecto si no coincide nada
+        }        
     
-        // Manejar la selección del tee
-        $(document).on('change', '#tee_select', function () {
-            let selected = $(this).find(':selected');
+        // Manejar la selección del tee (cambiar de 'change' a 'click' para radio buttons)
+        $(document).on('change', 'input[name="tee_select"]', function () {
+            let selected = $(this);
 
             $('#club-seleccionado').html(`
                 <strong>Tee:</strong> ${selected.data('tee-name')}<br>
@@ -194,8 +262,8 @@
             document.querySelector('#contenedor-seleccion-y-formulario').scrollIntoView({ behavior: 'smooth', block: 'center' });
         });
 
-          // Cargar y mostrar los clubes más frecuentes
-          function cargarClubesHabituales() {
+        // Cargar y mostrar los clubes más frecuentes
+        function cargarClubesHabituales() {
             let cached = localStorage.getItem(STORAGE_KEY);
             if (!cached) return;
         
@@ -326,11 +394,11 @@
                             club_id: club_id,
                             club_name: $('#club-nombre').text(),
                             ciudad: $('#club-ciudad').text(),
-                            tee_name: $('#tee_select option:selected').data('tee-name'),
-                            par: $('#tee_select option:selected').data('par'),
-                            gender: $('#tee_select option:selected').data('gender'),
-                            rating: $('#tee_select option:selected').data('rating'),
-                            length: $('#tee_select option:selected').data('length')
+                            tee_name: $('input[name="tee_select"]:checked').data('tee-name'),
+                            par: $('input[name="tee_select"]:checked').data('par'),
+                            gender: $('input[name="tee_select"]:checked').data('gender'),
+                            rating: $('input[name="tee_select"]:checked').data('rating'),
+                            length: $('input[name="tee_select"]:checked').data('length')
                         };
 
                         guardarClubHabitual(club); // Guardar solo después del cálculo

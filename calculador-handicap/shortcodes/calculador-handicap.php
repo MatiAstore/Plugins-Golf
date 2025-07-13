@@ -39,9 +39,10 @@ function mi_plugin_formulario_handicap() {
 
         <!-- Tees del club elegido -->
         <div id="tee-seleccionado" style="display: none;">
-            <label for="tee_select">Seleccionar Tee:</label>
-            <select id="tee_select" name="tee_select" required>
-            </select>
+            <p>Selecciona tu Tee:</p>    
+            <form id="form-seleccion-tee">
+                <!-- contenido de los tees. dinamoco --> 
+            </form>
         </div>
 
         <!-- Contenedor club elegido con su tee y formalurio -->

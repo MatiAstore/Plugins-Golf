@@ -23,7 +23,6 @@ function mi_plugin_formulario_wgh() {
     ob_start();
     ?>        
     <div class="shortcode-wgh" id="shortcode-wgh">
-        
         <!-- Sección: Clubes Habituales -->
         <div id="clubes-habituales" style="display: none;"></div>
 
@@ -37,11 +36,12 @@ function mi_plugin_formulario_wgh() {
         </div>
      
         <div id="tee-seleccionado" style="display: none;">
-            <label for="tee_select">Seleccionar Tee:</label>
-            <select id="tee_select" name="tee_select" required>
-            </select>
+            <p>Selecciona tu Tee:</p>    
+            <form id="form-seleccion-tee">
+                <!-- contenido de los tees. dinamoco --> 
+            </form>
         </div>
-
+ 
         <div id="contenedor-seleccion-y-formulario" style="display: none;">
             <div id="club-seleccionado"></div>
 
